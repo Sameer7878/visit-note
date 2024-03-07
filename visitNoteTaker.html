@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Information</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input[type="text"],
+        textarea {
+            width: calc(50% - 5px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        input[readonly] {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #propertyForm .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #propertyForm {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Location section */
+        #locationSection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        #locationSection label,
+        #locationSection input[type="text"],
+        #locationSection button {
+            width: auto;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        canvas {
+            border: 1px solid #000;
+            cursor: crosshair;
+        }
+
+        #controls button {
+            margin-top: 10px;
+            margin-right: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        .side-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-sizing: border-box;
+
+        }
+    </style>
+</head>
+<body>
+
+<h2>Property Information</h2>
+
+<form id="propertyForm">
+    <!-- Unique fields -->
+    <label for="bank">Bank Name</label>
+    <input class="form-field" type="text" id="bank" name="Bank Name">
+    <label for="area">Area Name</label>
+    <input class="form-field" type="text" id="area" name="Area Name">
+    <label for="owner">Customer Name</label>
+    <input class="form-field" type="text" id="owner" name="Customer Name">
+
+    <label for="mobile">Mobile Number:</label>
+    <input class="form-field" type="text" id="mobile" name="Mobile">
+
+    <label for="loanAmount">Loan Amount:</label>
+    <input class="form-field" type="text" id="loanAmount" name="Loan Amount">
+
+    <label for="buildingAge">Building Age:</label>
+    <input class="form-field" type="text" id="buildingAge" name="Building Age">
+
+    <label for="siteArea">Site (axb format):</label>
+    <input class="form-field" type="text" id="siteArea" name="Site" oninput="calculateArea()">
+    <label for="addArea">Additonal (axb format):</label>
+    <input class="form-field" type="text" id="addArea" name="Additional" oninput="calculateArea()">
+    <div id="plinthFields">
+        <label for="plinthArea">Ground Floor (axb format):</label>
+        <input type="text" id="plinthArea" name="Ground Floor" oninput="calculateArea()">
+        <button class="side-btn" type="button" id="addPlinthButton">Add</button>
+    </div>
+    <div id="autoCal">
+        <label for="calculatedSiteAreasf">Calculated Site Area: (Sqft)</label>
+        <input class="form-field" type="text" id="calculatedSiteAreasf" name="Site Area (sqft)">
+        <label for="calculatedSiteAreaan">Calculated Site Area: (Ankhanams)</label>
+        <input class="form-field" type="text" id="calculatedSiteAreaan" name="Site Area (Ankhanams)" readonly>
+        <label for="calculatedSiteAreasy">Calculated Site Area: (SqYd)</label>
+        <input class="form-field" type="text" id="calculatedSiteAreasy" name="Site Area (SqYd)" readonly>
+
+        <label for="calculatedSiteAreasf">Calculated Additional Area: (Sqft)</label>
+        <input class="form-field" type="text" id="calculatedAddAreasf" name="Additional Area (sqft)">
+        <label for="calculatedPlinthAreasf">Calculated Plinth Ground Floor Area: (Sqft)</label>
+        <input class="form-field" type="text" id="calculatedPlinthAreasf" name="Ground Floor Area (sqft)">
+    </div>
+    <label for="westRoad">West Road:</label>
+    <input class="form-field" type="text" id="westRoad" name="West Road">
+
+    <label for="northRoad">North Road:</label>
+    <input class="form-field" type="text" id="northRoad" name="North Road">
+
+    <label for="eastRoad">East Road:</label>
+    <input class="form-field" type="text" id="eastRoad" name="East Road">
+
+    <label for="southRoad">South Road:</label>
+    <input class="form-field" type="text" id="southRoad" name="South Road">
+
+    <label for="purchaseRate">Purchase Rate:</label>
+    <input class="form-field" type="text" id="purchaseRate" name="Purchase Rate">
+
+    <label for="ankanamRate">Ankanam Rate:</label>
+    <input class="form-field" type="text" id="ankanamRate" name="Ankanam Rate">
+
+    <label for="rentalIncome">Rental Income:</label>
+    <input class="form-field" type="text" id="rentalIncome" name="Rental Income">
+
+    <label for="landmark">Landmark:</label>
+    <input class="form-field" type="text" id="landmark" name="Landmark">
+
+    <label for="additionalInfo">Additional Information:</label>
+    <textarea class="form-field" id="additionalInfo" name="Additional Info"></textarea>
+    <div id="locationSection">
+        <!-- Location field -->
+        <label for="location">Location:</label>
+        <input class="form-field" type="text" id="location" name="Location">
+        <button type="button" onclick="getLocation()" class="btn">Get Location</button>
+    </div>
+    <button class="btn" type="button" onclick="shareData()">Share Data</button>
+    <button class="btn" id="saveFormDataButton">Save Form Data as Text</button>
+    <button class="btn" id="saveCanvasButton">Save Canvas as JPG</button>
+</form>
+<div id="controls">
+    <input type="text" id="textInput" placeholder="Enter text here">
+    <button id="addTextButton">Add Text</button>
+    <button id="resetButton">Reset</button>
+</div>
+
+<canvas id="drawingCanvas" width="400" height="800"></canvas>
+
+<script>
+    var i = 1;
+    document.getElementById('addPlinthButton').addEventListener('click', function () {
+        var plinthFields = document.getElementById('plinthFields');
+        plinthFields.insertAdjacentHTML('beforeend', `<label for="plinthArea${i}">${i} Floor (axb format):</label>
+        <input type="text" name="${i} Floor" id="plinthArea${i}" oninput="calculateArea(ad=${i})">`)
+        document.getElementById('autoCal').insertAdjacentHTML('beforeend', `<label for="calculatedPlinth${i}Areasf">Calculated ${i} Floor Area: (Sqft)</label>
+    <input class="form-field" type="text" id="calculatedPlinth${i}Areasf" name="${i} Floor Area (sqft)" >`)
+        i++;
+    });
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        document.getElementById("location").value = position.coords.latitude + ", " + position.coords.longitude;
+    }
+
+    document.getElementById('saveFormDataButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        var formValues = document.getElementById('propertyForm').elements;
+        var formData = "";
+        for (var i = 0; i < formValues.length; i++) {
+            if (formValues[i].value.trim() !== "") {
+                formData += formValues[i].name + ": " + formValues[i].value.toUpperCase() + "\n\n";
+            }
+        }
+        var blob = new Blob([formData], {type: "text/plain;charset=utf-8"});
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = document.getElementById('bank').value + '-' + document.getElementById('owner').value + '.txt';
+
+        // Triggering click event
+        a.click();
+    });
+
+    function shareData() {
+        var formValues = document.getElementById('propertyForm').elements;
+        var dataString = "";
+        for (var i = 0; i < formValues.length; i++) {
+            if (formValues[i].value.trim() !== "") {
+                dataString += formValues[i].name + ": " + formValues[i].value.toUpperCase() + "\n\n";
+
+            }
+
+        }
+        var whatsappURL = "https://wa.me/?text=" + encodeURIComponent(dataString);
+        window.open(whatsappURL, "_blank");
+    }
+
+    function calculateArea(ad = 0) {
+        var plinthAreaInput = document.getElementById("plinthArea").value.trim();
+        var siteAreaInput = document.getElementById("siteArea").value.trim();
+        var addAreaInput = document.getElementById("addArea").value.trim();
+        if (ad) {
+            var plinthAreaInput = document.getElementById("plinthArea" + ad).value.trim();
+            if (plinthAreaInput.match(/^\d+(\.\d+)?x\d+(\.\d+)?$/)) {
+                var plinthDimensions = plinthAreaInput.split("x");
+                // Calculate area for both plinth and site
+                var calculatedPlinthArea = plinthDimensions[0] * plinthDimensions[1];
+                document.getElementById("calculatedPlinth" + ad + "Areasf").value = calculatedPlinthArea.toFixed(2);
+                return 0;
+            }
+        }
+        // Check if both inputs are in "axb" format
+        if (plinthAreaInput.match(/^\d+(\.\d+)?x\d+(\.\d+)?$/)) {
+            var plinthDimensions = plinthAreaInput.split("x");
+            // Calculate area for both plinth and site
+            var calculatedPlinthArea = plinthDimensions[0] * plinthDimensions[1];
+            document.getElementById("calculatedPlinthAreasf").value = calculatedPlinthArea.toFixed(2);
+
+        }
+        if (siteAreaInput.match(/^\d+(\.\d+)?x\d+(\.\d+)?$/)) {
+            var siteDimensions = siteAreaInput.split("x");
+
+            var calculatedSiteArea = siteDimensions[0] * siteDimensions[1];
+            var calculatedSiteAreaan = calculatedSiteArea / 72;
+            var calculatedSiteAreasy = calculatedSiteArea / 9;
+            // Update readonly fields
+            document.getElementById("calculatedSiteAreasf").value = calculatedSiteArea.toFixed(2);
+            document.getElementById("calculatedSiteAreaan").value = calculatedSiteAreaan.toFixed(2);
+            document.getElementById("calculatedSiteAreasy").value = calculatedSiteAreasy.toFixed(2);
+        }
+        if (addAreaInput.match(/^\d+(\.\d+)?x\d+(\.\d+)?$/)) {
+            var addDimensions = addAreaInput.split("x");
+            var calculatedAddArea = addDimensions[0] * addDimensions[1];
+
+            // Update readonly fields
+            document.getElementById("calculatedAddAreasf").value = calculatedAddArea.toFixed(2);
+        }
+    }
+</script>
+<script>
+    var canvas = document.getElementById('drawingCanvas');
+    var ctx = canvas.getContext('2d');
+
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+
+    var isDrawing = false;
+    var isDragging = false;
+    var lastX = 0;
+    var lastY = 0;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var dragOffsetX = 0;
+    var dragOffsetY = 0;
+    var textList = []; // Array to store texts
+    var lines = []; // Array to store coordinates of the lines drawn
+    var recentActions = [];
+
+    function drawLine(startX, startY, endX, endY, red = false) {
+        if (!(red))
+            recentActions.push('l')
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+    }
+
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            drawLine(line[0], line[1], line[2], line[3], red = true);
+        }
+        ctx.font = '14px Arial';
+        for (var i = 0; i < textList.length; i++) {
+            var textObj = textList[i];
+            ctx.fillText(textObj.text, textObj.x, textObj.y);
+        }
+    }
+
+    function handleMouseMove(e) {
+        if (isDragging) {
+            var mouseX = e.offsetX;
+            var mouseY = e.offsetY;
+            textList[dragIndex].x = mouseX - dragOffsetX;
+            textList[dragIndex].y = mouseY - dragOffsetY;
+            redrawCanvas();
+        } else if (isDrawing) {
+            var mouseX = e.offsetX;
+            var mouseY = e.offsetY;
+            lines.push([lastX, lastY, mouseX, mouseY]);
+            drawLine(lastX, lastY, mouseX, mouseY);
+            [lastX, lastY] = [mouseX, mouseY];
+        }
+    }
+
+    function handleMouseDown(e) {
+        var mouseX = e.offsetX;
+        var mouseY = e.offsetY;
+        var isTextClicked = false;
+        for (var i = 0; i < textList.length; i++) {
+            var textObj = textList[i];
+            if (mouseX > textObj.x && mouseX < textObj.x + ctx.measureText(textObj.text).width &&
+                mouseY > textObj.y - 20 && mouseY < textObj.y) {
+                isDragging = true;
+                dragStartX = mouseX;
+                dragStartY = mouseY;
+                dragOffsetX = mouseX - textObj.x;
+                dragOffsetY = mouseY - textObj.y;
+                dragIndex = i;
+                isTextClicked = true;
+                break;
+            }
+        }
+        if (!isTextClicked) {
+            isDrawing = true;
+            [lastX, lastY] = [mouseX, mouseY];
+        }
+    }
+
+    function handleMouseUp() {
+        isDrawing = false;
+        isDragging = false;
+    }
+
+    function addText() {
+        recentActions.push('t')
+        console.log('t')
+        var text = document.getElementById('textInput').value;
+        var mouseX = Math.min(Math.max(50, lastX), canvas.width - 50); // Ensure text is within canvas bounds
+        var mouseY = Math.min(Math.max(50, lastY), canvas.height - 20);
+        textList.push({text: text, x: mouseX, y: mouseY});
+        redrawCanvas();
+    }
+
+    function resetCanvas() {
+        if (recentActions.length > 0) {
+            console.log(recentActions)
+            console.log(recentActions[recentActions.length - 1])
+            if (recentActions[recentActions.length - 1] === 'l')
+                lines.pop();
+            else
+                textList.pop();
+        }
+        redrawCanvas();
+        recentActions.pop()
+    }
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+
+    document.getElementById('addTextButton').addEventListener('click', addText);
+    document.getElementById('resetButton').addEventListener('click', resetCanvas);
+    document.getElementById('saveCanvasButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        var currentDate = new Date();
+        var fileName = 'building_rough_' + currentDate.getFullYear() +
+            ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+            ('0' + currentDate.getDate()).slice(-2) + '_' +
+            ('0' + currentDate.getHours()).slice(-2) +
+            ('0' + currentDate.getMinutes()).slice(-2) +
+            ('0' + currentDate.getSeconds()).slice(-2) + '.jpg';
+        var canvas = document.getElementById('drawingCanvas');
+        var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        var link = document.createElement('a');
+        link.href = image;
+        link.download = fileName;
+
+        // Trigger a click event on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+</script>
+<script>
+
+    // Function to set cookie
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    // Function to get cookie
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    // Function to fill form fields from cookies
+    function fillFormFromCookies() {
+        var formValues = document.getElementById('propertyForm').elements;
+        for (var i = 0; i < formValues.length; i++) {
+            var cookieValue = getCookie(formValues[i].name);
+            if (cookieValue !== "") {
+                formValues[i].value = cookieValue;
+            }
+        }
+    }
+
+    // Function to store form data in cookies
+    function storeDataInCookies() {
+        console.log('hello')
+        var formValues = document.getElementById('propertyForm').elements;
+        for (var i = 0; i < formValues.length; i++) {
+            setCookie(formValues[i].name, formValues[i].value, 30); // Set cookie for 30 days
+        }
+    }
+
+    // Fill form fields from cookies when page loads
+    window.onload = function () {
+        fillFormFromCookies();
+    };
+
+    // Save form data to cookies on input
+    document.getElementById('propertyForm').addEventListener('input', function () {
+        storeDataInCookies();
+    });
+
+    // Reset form and remove cookies
+    document.getElementById('resetButton').addEventListener('click', function () {
+        var formValues = document.getElementById('propertyForm').elements;
+        for (var i = 0; i < formValues.length; i++) {
+            formValues[i].value = ""; // Reset form fields
+            setCookie(formValues[i].name, "", -1); // Remove cookie by setting expiration to past
+        }
+    });
+</script>
+
+</body>
+</html>
